@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>El Buen Corte - Carnicería Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8A2BE2;       /* Violeta principal */
+            --primary-dark: #6A0DAD;  /* Violeta oscuro */
+            --primary-light: #9370DB; /* Violeta medio */
+            --accent: #FF69B4;        /* Rosa acento */
+            --accent-light: #FFB6C1;  /* Rosa claro */
+            --secondary: #F8F4FF;     /* Fondo violeta muy claro */
+            --text: #4A4A4A;          /* Texto principal */
+            --text-light: #7B7B7B;    /* Texto secundario */
+            --success: #9C27B0;       /* Éxito en tono violeta */
+            --warning: #E91E63;       /* Advertencia en rosa */
+            --background: #FFFFFF;    /* Fondo blanco */
+            --card-shadow: 0 6px 16px rgba(138, 43, 226, 0.15);
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: var(--secondary);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-bottom: 70px;
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(138, 43, 226, 0.3);
+        }
+        
+        .menu-btn {
+            font-size: 20px;
+            background: none;
+            border: none;
+            color: white;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        
+        .logo {
+            flex-grow: 1;
+            font-weight: bold;
+            font-size: 20px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            font-size: 14px;
+        }
+        
+        .cart-icon {
+            position: relative;
+            font-size: 20px;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .main-content {
+            margin-top: 70px;
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            font-size: 22px;
+            margin: 15px 0;
+            color: var(--primary-dark);
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--accent);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.2);
+        }
+        
+        .product-image {
+            height: 140px;
+            background: linear-gradient(45deg, var(--primary-light), var(--accent-light));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: var(--primary-dark);
+        }
+        
+        .product-price {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        
+        .quantity-selector {
+            display: flex;
+            margin-bottom: 12px;
+            border: 1px solid #E8E8E8;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #F9F9F9;
+        }
+        
+        .qty-btn {
+            flex: 1;
+            background: #f5f5f5;
+            border: none;
+            padding: 8px 0;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .qty-btn.active {
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .qty-btn:hover:not(.active) {
+            background: #E8E8E8;
+        }
+        
+        .add-to-cart {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 0;
+            border-radius: 10px;
+            width: 100%;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(138, 43, 226, 0.3);
+        }
+        
+        .add-to-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(138, 43, 226, 0.4);
+        }
+        
+        .add-to-cart:active {
+            transform: translateY(0);
+        }
+        
+        .stats-container {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            background: linear-gradient(to bottom, white, #FCFAFF);
+        }
+        
+        .stats-title {
+            font-size: 20px;
+            color: var(--primary-dark);
+            margin-bottom: 18px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #F9F5FF;
+            border-radius: 12px;
+            transition: transform 0.2s;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(to bottom, #F9F5FF, #F3ECFF);
+        }
+        
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        
+        .purchase-history {
+            margin-top: 25px;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #F0F0F0;
+            transition: background 0.2s;
+        }
+        
+        .history-item:hover {
+            background: #F9F5FF;
+            border-radius: 8px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        
+        .history-date {
+            color: var(--text-light);
+            font-size: 13px;
+        }
+        
+        .history-amount {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .news-container {
+            margin-top: 25px;
+        }
+        
+        .news-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 18px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .news-image {
+            height: 140px;
+            background: linear-gradient(45deg, var(--primary-light), var(--accent-light));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .news-content {
+            padding: 18px;
+        }
+        
+        .news-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+            font-size: 17px;
+        }
+        
+        .news-date {
+            color: var(--text-light);
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        
+        .news-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 75px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 15px rgba(138, 43, 226, 0.15);
+            z-index: 1000;
+            border-top: 1px solid #F0F0F0;
+            padding: 0 5px;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-light);
+            width: 22%;
+            height: 100%;
+            transition: all 0.3s;
+            border-radius: 12px;
+            margin: 0 3px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+            background: linear-gradient(to top, #F9F5FF, #FFFFFF);
+            transform: translateY(-5px);
+        }
+        
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active .nav-icon {
+            transform: scale(1.2);
+            color: var(--primary);
+        }
+        
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            height: 100%;
+            background-color: white;
+            z-index: 1010;
+            transition: right 0.4s ease;
+            box-shadow: -4px 0 20px rgba(138, 43, 226, 0.25);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .cart-modal.open {
+            right: 0;
+        }
+        
+        .cart-header {
+            padding: 25px 20px;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-cart {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+        }
+        
+        .cart-items {
+            padding: 20px;
+            flex-grow: 1;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        
+        .item-info {
+            flex-grow: 1;
+        }
+        
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: var(--primary-dark);
+        }
+        
+        .item-price {
+            color: var(--primary);
+            font-size: 15px;
+        }
+        
+        .item-quantity {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid #E8E8E8;
+            background: white;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quantity-btn:hover {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-light);
+        }
+        
+        .quantity {
+            margin: 0 12px;
+            font-weight: bold;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .cart-total {
+            padding: 25px 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+            border-top: 2px solid #F0F0F0;
+            color: var(--primary-dark);
+            background: #F9F5FF;
+        }
+        
+        .checkout-btn {
+            display: block;
+            width: calc(100% - 30px);
+            margin: 20px 15px;
+            padding: 18px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        }
+        
+        .checkout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.4);
+        }
+        
+        .checkout-btn:active {
+            transform: translateY(0);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1005;
+            display: none;
+            backdrop-filter: blur(3px);
+        }
+        
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 80%;
+            height: 100%;
+            background-color: white;
+            z-index: 1010;
+            transition: left 0.4s ease;
+            box-shadow: 4px 0 20px rgba(138, 43, 226, 0.25);
+            overflow-y: auto;
+        }
+        
+        .side-menu.open {
+            left: 0;
+        }
+        
+        .menu-header {
+            padding: 30px 20px;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 18px;
+            font-size: 26px;
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+        
+        .menu-items {
+            padding: 18px 0;
+        }
+        
+        .menu-item {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #F0F0F0;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .menu-item:active {
+            background-color: #F9F5FF;
+        }
+        
+        .menu-icon {
+            margin-right: 18px;
+            color: var(--primary);
+            font-size: 22px;
+            width: 26px;
+            text-align: center;
+        }
+        
+        .customer-form {
+            padding: 20px;
+            display: none;
+        }
+        
+        .customer-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            color: var(--primary-dark);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #E8E8E8;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 15px;
+        }
+        
+        .cancel-btn {
+            padding: 15px 25px;
+            background-color: #F5F5F5;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.2s;
+        }
+        
+        .cancel-btn:hover {
+            background-color: #E8E8E8;
+        }
+        
+        .confirm-btn {
+            padding: 15px 25px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 2;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(138, 43, 226, 0.3);
+        }
+        
+        .confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(138, 43, 226, 0.4);
+        }
+        
+        .whatsapp-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #25D366;
+            color: white;
+            padding: 18px;
+            border-radius: 12px;
+            margin: 20px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+        
+        .whatsapp-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+        }
+        
+        .whatsapp-btn i {
+            margin-right: 12px;
+            font-size: 22px;
+        }
+        
+        .image-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .upload-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(138, 43, 226, 0.3);
+        }
+        
+        @media (min-width: 480px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Animaciones adicionales */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header con menú hamburguesa y carrito -->
+    <div class="header">
+        <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+        <div class="logo">Carnicería Premium</div>
+        <div class="user-info">Hola, Carlos</div>
+        <div class="cart-icon" id="cartIcon">
+            <i class="fas fa-shopping-cart"></i>
+            <div class="cart-count" id="cartCount">0</div>
+        </div>
+    </div>
+    
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <!-- Sección de Inicio (Historial) -->
+        <div class="section active" id="section-home">
+            <div class="stats-container">
+                <div class="stats-title">Mis Estadísticas</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">$ 154.200</div>
+                        <div class="stat-label">Gasto mensual</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Compras este mes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5.2 kg</div>
+                        <div class="stat-label">Carne comprada</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$ 12.850</div>
+                        <div class="stat-label">Promedio por compra</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="purchase-history">
+                <div class="section-title">Últimas compras</div>
+                <div class="history-item">
+                    <div>
+                        <div>Compra #1256</div>
+                        <div class="history-date">20 Nov 2023, 15:30</div>
+                    </div>
+                    <div class="history-amount">$ 17.100</div>
+                </div>
+                <div class="history-item">
+                    <div>
+                        <div>Compra #1251</div>
+                        <div class="history-date">18 Nov 2023, 11:15</div>
+                    </div>
+                    <div class="history-amount">$ 11.560</div>
+                </div>
+                <div class="history-item">
+                    <div>
+                        <div>Compra #1248</div>
+                        <div class="history-date">15 Nov 2023, 17:45</div>
+                    </div>
+                    <div class="history-amount">$ 14.080</div>
+                </div>
+            </div>
+            
+            <div class="news-container">
+                <div class="section-title">Ofertas especiales</div>
+                <div class="news-card">
+                    <div class="news-image">
+                        <img src="https://placehold.co/600x400/8A2BE2/FFFFFF?text=Oferta+Especial" alt="Oferta de chorizos" class="news-img">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-title">2x1 en Chorizos Parilleros</div>
+                        <div class="news-date">Válido hasta el 30 de noviembre</div>
+                        <div class="news-text">Aprovecha esta increíble promoción en todos nuestros chorizos parilleros de primera calidad.</div>
+                    </div>
+                </div>
+                <div class="news-card">
+                    <div class="news-image">
+                        <img src="https://placehold.co/600x400/FF69B4/FFFFFF?text=Descuento+25%" alt="Descuento en cortes premium" class="news-img">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-title">25% de descuento en Cortes Premium</div>
+                        <div class="news-date">Solo este fin de semana</div>
+                        <div class="news-text">No te pierdas esta oportunidad única de llevar los mejores cortes con un increíble descuento.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Vacuno -->
+        <div class="section" id="section-beef">
+            <div class="section-title">Cortes de Vacuno</div>
+            <div class="image-upload">
+                <p>¿Quieres usar tus propias imágenes?</p>
+                <button class="upload-btn" onclick="document.getElementById('beefImageUpload').click()">
+                    <i class="fas fa-upload"></i> Subir imagen
+                </button>
+                <input type="file" id="beefImageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'beef')">
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/8A2BE2/FFFFFF?text=Filete+de+Res" alt="Filete de Res" class="product-img" data-id="1">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Filete de Res</div>
+                        <div class="product-price">$12.990/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="1">Agregar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/9370DB/FFFFFF?text=Carne+Molida" alt="Carne Molida" class="product-img" data-id="2">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Carne Molida</div>
+                        <div class="product-price">$8.990/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="2">Agregar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/6A0DAD/FFFFFF?text=T-Bone+Steak" alt="T-Bone Steak" class="product-img" data-id="3">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">T-Bone Steak</div>
+                        <div class="product-price">$15.990/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="3">Agregar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/FF69B4/FFFFFF?text=Asado+de+Tira" alt="Asado de Tira" class="product-img" data-id="4">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Asado de Tira</div>
+                        <div class="product-price">$11.490/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="4">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Cerdo -->
+        <div class="section" id="section-pork">
+            <div class="section-title">Cortes de Cerdo</div>
+            <div class="image-upload">
+                <p>¿Quieres usar tus propias imágenes?</p>
+                <button class="upload-btn" onclick="document.getElementById('porkImageUpload').click()">
+                    <i class="fas fa-upload"></i> Subir imagen
+                </button>
+                <input type="file" id="porkImageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'pork')">
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/8A2BE2/FFFFFF?text=Costillas+de+Cerdo" alt="Costillas de Cerdo" class="product-img" data-id="5">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Costillas de Cerdo</div>
+                        <div class="product-price">$9.990/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="5">Agregar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/9370DB/FFFFFF?text=Lomo+de+Cerdo" alt="Lomo de Cerdo" class="product-img" data-id="6">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Lomo de Cerdo</div>
+                        <div class="product-price">$10.990/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="6">Agregar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/6A0DAD/FFFFFF?text=Chuleta+de+Cerdo" alt="Chuleta de Cerdo" class="product-img" data-id="7">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Chuleta de Cerdo</div>
+                        <div class="product-price">$9.490/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="7">Agregar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/FF69B4/FFFFFF?text=Panceta+Ahumada" alt="Panceta Ahumada" class="product-img" data-id="8">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Panceta Ahumada</div>
+                        <div class="product-price">$12.990/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="8">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Pollo -->
+        <div class="section" id="section-chicken">
+            <div class="section-title">Cortes de Pollo</div>
+            <div class="image-upload">
+                <p>¿Quieres usar tus propias imágenes?</p>
+                <button class="upload-btn" onclick="document.getElementById('chickenImageUpload').click()">
+                    <i class="fas fa-upload"></i> Subir imagen
+                </button>
+                <input type="file" id="chickenImageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'chicken')">
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/8A2BE2/FFFFFF?text=Pechuga+de+Pollo" alt="Pechuga de Pollo" class="product-img" data-id="9">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Pechuga de Pollo</div>
+                        <div class="product-price">$7.990/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="9">Agregar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/9370DB/FFFFFF?text=Alitas+de+Pollo" alt="Alitas de Pollo" class="product-img" data-id="10">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Alitas de Pollo</div>
+                        <div class="product-price">$6.990/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="10">Agregar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/6A0DAD/FFFFFF?text=Muslos+de+Pollo" alt="Muslos de Pollo" class="product-img" data-id="11">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Muslos de Pollo</div>
+                        <div class="product-price">$5.990/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="11">Agregar</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://placehold.co/600x400/FF69B4/FFFFFF?text=Pollo+Entero" alt="Pollo Entero" class="product-img" data-id="12">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Pollo Entero</div>
+                        <div class="product-price">$6.490/kg</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn active" data-weight="1">1kg</button>
+                            <button class="qty-btn" data-weight="0.5">½kg</button>
+                            <button class="qty-btn" data-weight="0.25">¼kg</button>
+                        </div>
+                        <button class="add-to-cart" data-id="12">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Menú inferior -->
+    <div class="bottom-nav">
+        <div class="nav-item active" data-section="section-home">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <div>Inicio</div>
+        </div>
+        <div class="nav-item" data-section="section-beef">
+            <div class="nav-icon"><i class="fas fa-cow"></i></div>
+            <div>Vacuno</div>
+        </div>
+        <div class="nav-item" data-section="section-pork">
+            <div class="nav-icon"><i class="fas fa-piggy-bank"></i></div>
+            <div>Cerdo</div>
+        </div>
+        <div class="nav-item" data-section="section-chicken">
+            <div class="nav-icon"><i class="fas fa-kiwi-bird"></i></div>
+            <div>Pollo</div>
+        </div>
+    </div>
+    
+    <!-- Modal del carrito -->
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-header">
+            <h2>Tu Carrito</h2>
+            <button class="close-cart" id="closeCart"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="cart-items" id="cartItems">
+            <!-- Los items del carrito se cargarán dinámicamente -->
+        </div>
+        <div class="cart-total">
+            Total: $<span id="cartTotal">0</span> CLP
+        </div>
+        
+        <!-- Botón para proceder al pago -->
+        <button class="checkout-btn" id="checkoutBtn">Finalizar Compra</button>
+        
+        <!-- Formulario de datos del cliente -->
+        <div class="customer-form" id="customerForm">
+            <h3 style="padding: 0 15px;">Datos de entrega</h3>
+            
+            <div class="form-group">
+                <label for="customerName">Nombre completo</label>
+                <input type="text" id="customerName" placeholder="Ingresa tu nombre">
+            </div>
+            
+            <div class="form-group">
+                <label for="customerPhone">Teléfono</label>
+                <input type="tel" id="customerPhone" placeholder="+56 9 1234 5678">
+            </div>
+            
+            <div class="form-group">
+                <label for="customerAddress">Dirección de entrega</label>
+                <input type="text" id="customerAddress" placeholder="Ingresa tu dirección">
+            </div>
+            
+            <div class="form-actions">
+                <button class="cancel-btn" id="cancelOrder">Cancelar</button>
+                <button class="confirm-btn" id="confirmOrder">Confirmar pedido</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Menú lateral -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <div class="user-avatar"><i class="fas fa-user"></i></div>
+            <div>
+                <div>Carlos Mendoza</div>
+                <div style="font-size: 14px;">cliente@ejemplo.com</div>
+            </div>
+        </div>
+        <div class="menu-items">
+            <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-user"></i></div>
+                <div>Mi Perfil</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-history"></i></div>
+                <div>Historial de Compras</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div>Direcciones</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-credit-card"></i></div>
+                <div>Métodos de Pago</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-gift"></i></div>
+                <div>Promociones</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-cog"></i></div>
+                <div>Configuración</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-sign-out-alt"></i></div>
+                <div>Cerrar Sesión</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base de datos de productos (precios en CLP)
+        const products = [
+            { id: 1, name: "Filete de Res", price: 12990, category: "vacuno" },
+            { id: 2, name: "Carne Molida", price: 8990, category: "vacuno" },
+            { id: 3, name: "T-Bone Steak", price: 15990, category: "vacuno" },
+            { id: 4, name: "Asado de Tira", price: 11490, category: "vacuno" },
+            { id: 5, name: "Costillas de Cerdo", price: 9990, category: "cerdo" },
+            { id: 6, name: "Lomo de Cerdo", price: 10990, category: "cerdo" },
+            { id: 7, name: "Chuleta de Cerdo", price: 9490, category: "cerdo" },
+            { id: 8, name: "Panceta Ahumada", price: 12990, category: "cerdo" },
+            { id: 9, name: "Pechuga de Pollo", price: 7990, category: "pollo" },
+            { id: 10, name: "Alitas de Pollo", price: 6990, category: "pollo" },
+            { id: 11, name: "Muslos de Pollo", price: 5990, category: "pollo" },
+            { id: 12, name: "Pollo Entero", price: 6490, category: "pollo" }
+        ];
+        
+        // Variables globales
+        let cart = [];
+        let selectedWeight = 1;
+        
+        // Elementos del DOM
+        const menuBtn = document.getElementById('menuBtn');
+        const cartIcon = document.getElementById('cartIcon');
+        const cartCount = document.getElementById('cartCount');
+        const cartModal = document.getElementById('cartModal');
+        const overlay = document.getElementById('overlay');
+        const closeCart = document.getElementById('closeCart');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const sideMenu = document.getElementById('sideMenu');
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.section');
+        const customerForm = document.getElementById('customerForm');
+        const cancelOrderBtn = document.getElementById('cancelOrder');
+        const confirmOrderBtn = document.getElementById('confirmOrder');
+        
+        // Inicializar la aplicación
+        function init() {
+            loadCartFromStorage();
+            updateCartUI();
+            
+            // Event listeners
+            menuBtn.addEventListener('click', openSideMenu);
+            cartIcon.addEventListener('click', openCart);
+            closeCart.addEventListener('click', closeCartModal);
+            overlay.addEventListener('click', closeAllModals);
+            checkoutBtn.addEventListener('click', showCustomerForm);
+            cancelOrderBtn.addEventListener('click', showCartView);
+            confirmOrderBtn.addEventListener('click', processOrder);
+            
+            // Selectores de cantidad
+            document.querySelectorAll('.qty-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const parent = this.parentElement;
+                    parent.querySelectorAll('.qty-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedWeight = parseFloat(this.dataset.weight);
+                });
+            });
+            
+            // Navegación inferior
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const sectionId = item.dataset.section;
+                    
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    sections.forEach(section => section.classList.remove('active'));
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    closeAllModals();
+                });
+            });
+            
+            // Agregar event listeners a los botones de agregar al carrito
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const productId = parseInt(e.target.dataset.id);
+                    
+                    const card = e.target.closest('.product-card');
+                    const selectedBtn = card.querySelector('.qty-btn.active');
+                    const weight = parseFloat(selectedBtn.dataset.weight);
+                    
+                    addToCart(productId, weight);
+                    
+                    // Efecto de confirmación
+                    e.target.textContent = "✓ Agregado";
+                    e.target.style.background = "var(--success)";
+                    setTimeout(() => {
+                        e.target.textContent = "Agregar";
+                        e.target.style.background = "";
+                    }, 1500);
+                });
+            });
+        }
+        
+        // Funciones del carrito
+        function addToCart(productId, weight) {
+            const product = products.find(p => p.id === productId);
+            const existingItemIndex = cart.findIndex(item => item.id === productId && item.weight === weight);
+            
+            if (existingItemIndex !== -1) {
+                cart[existingItemIndex].quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    weight: weight,
+                    quantity: 1
+                });
+            }
+            
+            updateCartUI();
+            saveCartToStorage();
+            
+            // Efecto de animación en el ícono del carrito
+            cartCount.classList.add('pulse');
+            setTimeout(() => {
+                cartCount.classList.remove('pulse');
+            }, 1500);
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+            saveCartToStorage();
+        }
+        
+        function updateQuantity(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                removeFromCart(index);
+            } else {
+                updateCartUI();
+                saveCartToStorage();
+            }
+        }
+        
+        function updateCartUI() {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--text-light);"><i class="fas fa-shopping-cart" style="font-size: 40px; margin-bottom: 15px; display: block; color: var(--primary-light);"></i>Tu carrito está vacío</div>';
+                checkoutBtn.style.display = 'none';
+            } else {
+                checkoutBtn.style.display = 'block';
+                cart.forEach((item, index) => {
+                    const itemTotal = item.price * item.weight * item.quantity;
+                    total += itemTotal;
+                    
+                    const cartItemElement = document.createElement('div');
+                    cartItemElement.classList.add('cart-item');
+                    cartItemElement.innerHTML = `
+                        <div class="item-info">
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-price">${formatPrice(item.price)}/kg × ${formatWeight(item.weight)}</div>
+                        </div>
+                        <div class="item-quantity">
+                            <button class="quantity-btn minus" data-index="${index}">-</button>
+                            <span class="quantity">${item.quantity}</span>
+                            <button class="quantity-btn plus" data-index="${index}">+</button>
+                        </div>
+                    `;
+                    cartItems.appendChild(cartItemElement);
+                });
+                
+                document.querySelectorAll('.quantity-btn.minus').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        updateQuantity(index, -1);
+                    });
+                });
+                
+                document.querySelectorAll('.quantity-btn.plus').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        updateQuantity(index, 1);
+                    });
+                });
+            }
+            
+            cartTotal.textContent = formatPrice(total, false);
+        }
+        
+        function formatPrice(price, includeSymbol = true) {
+            const formatted = price.toLocaleString('es-CL');
+            return includeSymbol ? `$ ${formatted}` : formatted;
+        }
+        
+        function formatWeight(weight) {
+            if (weight === 1) return '1 kg';
+            if (weight === 0.5) return '½ kg';
+            if (weight === 0.25) return '¼ kg';
+            return `${weight} kg`;
+        }
+        
+        function openCart() {
+            cartModal.classList.add('open');
+            overlay.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            showCartView();
+        }
+        
+        function showCartView() {
+            cartItems.style.display = 'block';
+            document.querySelector('.cart-total').style.display = 'block';
+            checkoutBtn.style.display = 'block';
+            customerForm.style.display = 'none';
+        }
+        
+        function showCustomerForm() {
+            cartItems.style.display = 'none';
+            document.querySelector('.cart-total').style.display = 'none';
+            checkoutBtn.style.display = 'none';
+            customerForm.style.display = 'block';
+        }
+        
+        function closeCartModal() {
+            cartModal.classList.remove('open');
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        function openSideMenu() {
+            sideMenu.classList.add('open');
+            overlay.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeSideMenu() {
+            sideMenu.classList.remove('open');
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        function closeAllModals() {
+            closeCartModal();
+            closeSideMenu();
+        }
+        
+        function processOrder() {
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+            const address = document.getElementById('customerAddress').value;
+            
+            if (!name || !phone || !address) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+            
+            // Crear mensaje de WhatsApp
+            const message = createWhatsAppMessage(name, phone, address);
+            
+            // Codificar el mensaje para URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Número de WhatsApp (reemplaza con el número real)
+            const whatsappNumber = "56954988856";
+            
+            // Crear enlace de WhatsApp
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+            
+            // Abrir WhatsApp
+            window.open(whatsappUrl, '_blank');
+            
+            // Mostrar confirmación
+            cartModal.innerHTML = `
+                <div class="cart-header">
+                    <h2>¡Pedido Confirmado!</h2>
+                    <button class="close-cart" id="closeCart"><i class="fas fa-times"></i></button>
+                </div>
+                <div style="padding: 30px; text-align: center;">
+                    <i class="fas fa-check-circle" style="font-size: 60px; color: var(--success); margin-bottom: 20px;"></i>
+                    <h3>¡Gracias por tu compra!</h3>
+                    <p>Hemos enviado los detalles de tu pedido por WhatsApp.</p>
+                    <p>Te contactaremos pronto para coordinar la entrega.</p>
+                    <a href="${whatsappUrl}" class="whatsapp-btn" target="_blank">
+                        <i class="fab fa-whatsapp"></i> Abrir WhatsApp
+                    </a>
+                    <button class="checkout-btn" onclick="closeCartModal()">Continuar Comprando</button>
+                </div>
+            `;
+            
+            // Agregar event listener al nuevo botón de cerrar
+            document.getElementById('closeCart').addEventListener('click', closeCartModal);
+            
+            // Limpiar carrito después de enviar el pedido
+            cart = [];
+            updateCartUI();
+            saveCartToStorage();
+        }
+        
+        function createWhatsAppMessage(name, phone, address) {
+            let message = `¡Hola! Soy ${name} y quiero hacer un pedido.\n\n`;
+            message += `*Detalles del pedido:*\n`;
+            
+            cart.forEach(item => {
+                message += `• ${item.name} - ${formatWeight(item.weight)} x ${item.quantity} - $${formatPrice(item.price * item.weight * item.quantity, false)}\n`;
+            });
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.weight * item.quantity), 0);
+            message += `\n*Total:* $${formatPrice(total, false)}\n\n`;
+            message += `*Mis datos:*\n`;
+            message += `Nombre: ${name}\n`;
+            message += `Teléfono: ${phone}\n`;
+            message += `Dirección: ${address}\n\n`;
+            message += `Por favor confirmar disponibilidad y tiempo de entrega. ¡Gracias!`;
+            
+            return message;
+        }
+        
+        function calculateTotal() {
+            return cart.reduce((total, item) => total + (item.price * item.weight * item.quantity), 0);
+        }
+        
+        // Almacenamiento local
+        function saveCartToStorage() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+        
+        function loadCartFromStorage() {
+            const savedCart = localStorage.getItem('cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+        }
+        
+        // Función para manejar la carga de imágenes
+        function handleImageUpload(input, category) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // Aquí podrías guardar la imagen en localStorage o enviarla a un servidor
+                    // Por ahora, solo mostramos un mensaje de éxito
+                    alert('Imagen cargada con éxito. En una implementación real, esta imagen reemplazaría los placeholders.');
+                    
+                    // En una implementación real, aquí guardarías la imagen y actualizarías los src
+                    // Por ejemplo: 
+                    // localStorage.setItem('product-image-1', e.target.result);
+                    // document.querySelector('.product-img[data-id="1"]').src = e.target.result;
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        // Inicializar la aplicación
+        init();
+    </script>
+</body>
+</html>
