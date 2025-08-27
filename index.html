@@ -309,11 +309,11 @@
     </aside>
 
     <!-- Modal for contact form -->
-    <div id="modal" class="modal-overlay">
+    <div id="contact-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold">Datos del Pedido</h3>
-                <button id="close-modal" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+                <button id="close-contact-modal" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
             </div>
             <form id="contact-form" class="space-y-4">
                 <div>
@@ -330,6 +330,27 @@
                 </div>
                 <button type="submit" class="w-full bg-primary text-white py-2 rounded-md font-bold hover:bg-primary-dark transition-colors">Enviar por WhatsApp</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal for weight input -->
+    <div id="weight-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="weight-modal-title" class="text-xl font-bold">Ingresar peso</h3>
+                <button id="close-weight-modal" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <p id="weight-modal-product-name" class="text-gray-700"></p>
+                <div>
+                    <label for="weight-input" class="block text-sm font-medium text-gray-700">Peso en kg (ej: 0.5 para 500gr)</label>
+                    <input type="number" id="weight-input" min="0.01" step="0.01" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 p-2">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button id="add-to-cart-by-weight-btn" class="bg-primary text-white py-2 px-4 rounded-md font-bold hover:bg-primary-dark transition-colors">Agregar</button>
+                    <button id="cancel-weight-btn" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-md font-bold hover:bg-gray-400 transition-colors">Cancelar</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -377,9 +398,21 @@
             const cartCountSpan = document.getElementById('cart-count');
             const cartTotalSpan = document.getElementById('cart-total');
             const checkoutButton = document.getElementById('checkout-button');
-            const modal = document.getElementById('modal');
-            const closeModalButton = document.getElementById('close-modal');
+
+            // Contact modal elements
+            const contactModal = document.getElementById('contact-modal');
+            const closeContactModalButton = document.getElementById('close-contact-modal');
             const contactForm = document.getElementById('contact-form');
+
+            // Weight modal elements
+            const weightModal = document.getElementById('weight-modal');
+            const closeWeightModalButton = document.getElementById('close-weight-modal');
+            const weightModalTitle = document.getElementById('weight-modal-title');
+            const weightModalProductName = document.getElementById('weight-modal-product-name');
+            const weightInput = document.getElementById('weight-input');
+            const confirmWeightButton = document.getElementById('add-to-cart-by-weight-btn');
+            const cancelWeightButton = document.getElementById('cancel-weight-btn');
+
             const messageBox = document.getElementById('message-box');
             const searchInput = document.getElementById('search-input');
             const categoryLinks = document.querySelectorAll('.category-link');
@@ -387,6 +420,7 @@
             const subcategoryTabs = subcategoryTabsContainer.querySelector('.subcategory-tabs');
             
             let cart = [];
+            let currentProductToAdd = null; // Store product temporarily
             const whatsappNumber = '+56985418832';
 
             // Helper functions
@@ -395,7 +429,8 @@
             };
 
             const formatWeight = (weight) => {
-                return `${(weight * 1000).toLocaleString('es-CL')} gr`;
+                const formattedWeight = (weight * 1000);
+                return `${formattedWeight.toLocaleString('es-CL', { maximumFractionDigits: 0 })} gr`;
             };
 
             const showMessage = (message, type = 'success') => {
@@ -427,7 +462,7 @@
                             <h3 class="text-sm sm:text-base font-semibold text-gray-800 mb-1">${product.name}</h3>
                             <p class="text-xs text-gray-600 mb-2">${product.description}</p>
                             <p class="text-xs sm:text-sm text-primary-dark font-bold mb-2">${priceDisplay}</p>
-                            <button class="add-to-cart-btn w-full bg-primary text-white py-2 rounded-lg font-bold text-xs sm:text-sm hover:bg-primary-dark transition-colors" data-id="${product.id}">
+                            <button class="add-to-cart-btn w-full bg-yellow-500 text-white py-2 rounded-lg font-bold text-xs sm:text-sm hover:bg-yellow-600 transition-colors" data-id="${product.id}">
                                 Agregar <i class="fas fa-plus ml-1"></i>
                             </button>
                         </div>
@@ -504,33 +539,62 @@
                 if (button) {
                     const productId = parseInt(button.dataset.id);
                     const product = findProductById(productId);
-
-                    const existingItem = cart.find(item => item.id === productId);
+                    currentProductToAdd = product;
 
                     if (product.byWeight) {
-                        const weight = parseFloat(prompt(`Ingresa el peso en kg (ej: 0.5 para 500gr) para ${product.name}:`));
-                        if (!isNaN(weight) && weight > 0) {
-                            if (existingItem) {
-                                existingItem.quantity += 1;
-                                existingItem.weight += weight;
-                            } else {
-                                cart.push({ id: productId, quantity: 1, weight: weight, byWeight: true });
-                            }
-                            showMessage(`${product.name} agregado al carrito.`);
-                        } else {
-                            showMessage('Peso inválido.', 'warning');
-                        }
+                        weightModalProductName.textContent = product.name;
+                        weightInput.value = '';
+                        weightModal.style.display = 'flex';
                     } else {
+                        const existingItem = cart.find(item => item.id === productId);
                         if (existingItem) {
                             existingItem.quantity += 1;
                         } else {
                             cart.push({ id: productId, quantity: 1, byWeight: false });
                         }
                         showMessage(`${product.name} agregado al carrito.`);
+                        updateCart();
                     }
-                    updateCart();
                 }
             });
+
+            // Weight modal logic
+            closeWeightModalButton.addEventListener('click', () => {
+                weightModal.style.display = 'none';
+                currentProductToAdd = null;
+            });
+
+            cancelWeightButton.addEventListener('click', () => {
+                weightModal.style.display = 'none';
+                currentProductToAdd = null;
+            });
+
+            weightModal.addEventListener('click', (e) => {
+                if (e.target.id === 'weight-modal') {
+                    weightModal.style.display = 'none';
+                    currentProductToAdd = null;
+                }
+            });
+
+            confirmWeightButton.addEventListener('click', () => {
+                const weight = parseFloat(weightInput.value);
+                if (!isNaN(weight) && weight > 0 && currentProductToAdd) {
+                    const existingItem = cart.find(item => item.id === currentProductToAdd.id);
+                    if (existingItem) {
+                        existingItem.quantity += 1;
+                        existingItem.weight += weight;
+                    } else {
+                        cart.push({ id: currentProductToAdd.id, quantity: 1, weight: weight, byWeight: true });
+                    }
+                    showMessage(`${currentProductToAdd.name} agregado al carrito.`);
+                    updateCart();
+                    weightModal.style.display = 'none';
+                    currentProductToAdd = null;
+                } else {
+                    showMessage('Peso inválido.', 'warning');
+                }
+            });
+
 
             cartItemsContainer.addEventListener('click', (e) => {
                 const button = e.target.closest('.remove-from-cart-btn');
@@ -547,16 +611,16 @@
                     showMessage('Tu carrito está vacío.', 'warning');
                     return;
                 }
-                modal.style.display = 'flex';
+                contactModal.style.display = 'flex';
             });
 
-            closeModalButton.addEventListener('click', () => {
-                modal.style.display = 'none';
+            closeContactModalButton.addEventListener('click', () => {
+                contactModal.style.display = 'none';
             });
 
-            modal.addEventListener('click', (e) => {
-                if (e.target.id === 'modal') {
-                    modal.style.display = 'none';
+            contactModal.addEventListener('click', (e) => {
+                if (e.target.id === 'contact-modal') {
+                    contactModal.style.display = 'none';
                 }
             });
 
@@ -568,7 +632,7 @@
                 const whatsappMessage = createWhatsAppMessage(name, phone, address);
                 const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
                 window.open(whatsappUrl, '_blank');
-                modal.style.display = 'none';
+                contactModal.style.display = 'none';
                 contactForm.reset();
                 cart = [];
                 updateCart();
